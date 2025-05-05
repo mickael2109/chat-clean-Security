@@ -1,0 +1,17 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: light --default, dark --prefersdark, cupcake;
+}
+@theme {
+  --font-scripte: Great Vibes, cursive;
+  --color-primary-1: #121421;
+  --color-secondary: #292b37;
+  --color-dark: #1d232a;
+  --color-dark-2: #15191e;
+  --color-three: #232531;
+  --color-white: #fff;
+  --color-purple: #3f3cbb;
+  --color-midnight: #121063;
+  --color-line: #a0aec013;
+  
+}
