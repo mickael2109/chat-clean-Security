@@ -33,11 +33,11 @@ POST http://localhost:3000/api/message/send
 Content-Type: application/json
 
 {
-	"senderId":"6814e58829b88383a4cedb9a",
-	"receiverId":"6814e6e8c760cde75af824c4",
-	"content":"Message avy amin'i nananjy makany amin'i mika"
+	"senderId":"6835af67bf3973b387f784f4",
+	"receiverId":"6835af87bf3973b387f784f6",
+	"content":"Bonjour lty e"
 }
 
 
 ### get message for another user
-GET http://localhost:3000/api/message/6814e6e8c760cde75af824c4/6814e58829b88383a4cedb9a
+GET http://localhost:3000/api/message/6835af87bf3973b387f784f6/6835af67bf3973b387f784f4

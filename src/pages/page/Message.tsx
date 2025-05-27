@@ -21,6 +21,7 @@ const Message = () => {
     const clientReceiver = useSelector(selectClientsReceiver);
     const clientSender = useSelector(selectClientsSender);
     const messageSenderWithReceiver =  useSelector(selectAllMessageSenderWithReceiver);
+    
 
     useEffect(() => {
         if (id && clientSender) {        
@@ -33,15 +34,28 @@ const Message = () => {
     // État pour la connexion, typé avec loginInterface
     const [messageData, setMessageData] = useState<dataMessageInterface>({
         senderId: clientSender?._id,
-        receiverId: clientReceiver?._id,
+        receiverId: "", // vide au départ
         content: ""
     });
+
+    // Sync receiverId dès que clientReceiver change
+    useEffect(() => {
+        if (clientReceiver?._id) {
+            setMessageData((prev) => ({
+                ...prev,
+                receiverId: clientReceiver._id,
+                content: "" 
+            }));
+        }
+    }, [clientReceiver]);
 
     const sendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            
             dispatch(sendMessageSenderByReceiver(messageData));  
-            setMessageData({ ...messageData, content: "" })
+            setMessageData((prev) => ({ ...prev, content: "" }));
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error:any) {
             console.log("error : ",error.response.data.message);      
@@ -151,6 +165,7 @@ const Message = () => {
                         <textarea 
                             className="textarea h-24 w-full" 
                             placeholder="Message"
+                            value={messageData.content}
                             onChange={(e) => setMessageData({ ...messageData, content: e.target.value })}
                         >
                         </textarea>

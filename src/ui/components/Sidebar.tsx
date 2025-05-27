@@ -23,7 +23,7 @@ const Sidebar = () => {
                 {/* bas */}
                 <div className="flex flex-col items-center gap-1">
                     <div className="hover:bg-[#aca8a82f] p-2 rounded-full h-[50px] w-[50px] flex flex-row items-center justify-center cursor-pointer"><i className="text-[25px] "><IoSettingsOutline /></i></div>
-                    <div className="hover:bg-[#aca8a82f] p-2 rounded-full h-[50px] w-[50px] flex flex-row items-center justify-center cursor-pointer"><i className="text-[25px] "><IoIosLogOut /></i></div>
+                    <div className="hover:bg-[#aca8a82f] p-2 rounded-full h-[50px] w-[50px] flex flex-row items-center justify-center cursor-pointer"><NavLink to="/"><i className="text-[25px] "><IoIosLogOut /></i></NavLink></div>
                 </div>
             </div>
         </div>

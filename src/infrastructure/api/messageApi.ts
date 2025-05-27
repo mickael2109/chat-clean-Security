@@ -12,6 +12,7 @@ export const fetchMsgBySenderAndReceiver = async (senderId: string, receiverId: 
 
 
 export const fetchSendMessage = async (dataMessageInterface: dataMessageInterface) => {
+    
     const response = await Axios.post(`api/message/send`, {
         senderId: dataMessageInterface.senderId,
         receiverId: dataMessageInterface.receiverId,
