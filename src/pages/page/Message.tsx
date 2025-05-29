@@ -4,19 +4,29 @@ import { selectClientsReceiver, selectClientsSender } from "../../redux/client/c
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getClientRecever } from "../../domain/usecases/client/getClient";
-import { getMessageSenderWithReceiver, sendMessageSenderByReceiver } from "../../domain/usecases/message/message";
+import { decryptMessagesUseCase, getMessageSenderWithReceiver, sendMessageSenderByReceiver } from "../../domain/usecases/message/message";
 import { selectAllMessageSenderWithReceiver } from "../../redux/message/messageSelectors";
 import { dataMessageInterface } from "../../types/MessageInterface";
 import { SweetAlert } from "../../utils/sweetAlert";
 import { MdSend } from "react-icons/md";
-import Cookies from 'js-cookie';
-import { decryptMessage } from "../../application/cryptage/decrypt";
+import { getKey } from "../../domain/usecases/key/getKey";
 
 
 const Message = () => {
     const { id } = useParams();
-    const privateKey = Cookies.get('___chat-key');
+    const [privateKey, setPrivateKey] = useState("");
 
+    useEffect(() => {
+    const fetchKey = async () => {
+        const key = await getKey();
+        setPrivateKey(key);
+    };
+
+    fetchKey();
+    }, []);
+
+
+    
     const dispatch = useAppDispatch();
     const clientReceiver = useSelector(selectClientsReceiver);
     const clientSender = useSelector(selectClientsSender);
@@ -76,35 +86,22 @@ const Message = () => {
     const [decryptedMessages, setDecryptedMessages] = useState<{
         [key: number]: string;
     }>({});
-    // Effet pour déchiffrer les messages
+
     useEffect(() => {
-        const decryptAllMessages = async () => {
-            if(clientSender && privateKey){
-                //
-                const newDecryptedMessages: { [key: number]: string } = {};
-                
-                for (let index = 0; index < messageSenderWithReceiver.length; index++) {
-                    const item = messageSenderWithReceiver[index];
-                    let message = item.content.forSender
-                    if (item.senderId !== clientSender._id) message = item.content.forReceiver
-                    try {
-                        const decrypted = await decryptMessage(message, privateKey);
-                        
-                        newDecryptedMessages[index] = decrypted;
-                    } catch (err) {
-                        console.error(`Erreur de déchiffrement pour le message ${index}:`, err);
-                        newDecryptedMessages[index] = "Erreur de déchiffrement";
-                    }
-                }
-                setDecryptedMessages(newDecryptedMessages);
+        const processDecryption = async () => {
+            if (clientSender && privateKey) {
+            const result = await decryptMessagesUseCase({
+                messages: messageSenderWithReceiver,
+                privateKey,
+                clientSenderId: clientSender._id,
+            });
+            setDecryptedMessages(result);
             }
         };
 
-        if (privateKey) {
-        decryptAllMessages();
-        }
+        processDecryption();
     }, [messageSenderWithReceiver, privateKey, clientSender]);
-    
+
   
     return (
         <div>

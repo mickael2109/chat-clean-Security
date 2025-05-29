@@ -18,7 +18,7 @@ export const fetchSendMessage = async (dataMessageInterface: dataMessageInterfac
         receiverId: dataMessageInterface.receiverId,
         content: dataMessageInterface.content
     });
-    console.log("response : ",response.data);
+    // console.log("response : ",response.data);
     
     
     if (!response.data) throw new Error("Erreur lors du chargement des message");
