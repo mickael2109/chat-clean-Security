@@ -10,7 +10,10 @@ import { dataMessageInterface } from "../../types/MessageInterface";
 import { SweetAlert } from "../../utils/sweetAlert";
 import { MdSend } from "react-icons/md";
 import { getKey } from "../../domain/usecases/key/getKey";
+import { io } from "socket.io-client";
 
+
+const socket = io("http://localhost:3000");
 
 const Message = () => {
     const { id } = useParams();
@@ -26,6 +29,12 @@ const Message = () => {
     }, []);
 
 
+    socket.on("connect", () => {
+        console.log("🟢 Connected to server");
+    });
+
+   
+
     
     const dispatch = useAppDispatch();
     const clientReceiver = useSelector(selectClientsReceiver);
@@ -37,8 +46,10 @@ const Message = () => {
         if (id && clientSender) {        
             dispatch(getClientRecever(id));
             dispatch(getMessageSenderWithReceiver(clientSender._id, id));
-          }
+        }
     }, [dispatch, id, clientSender]);
+
+   
 
 
     // État pour la connexion, typé avec loginInterface
@@ -83,9 +94,24 @@ const Message = () => {
     }, [messageSenderWithReceiver]);
     
 
+    socket.on("new_message", (message) => {
+        console.log("id");
+        const me =  clientSender?._id
+        const receiverId = message.receiverId
+        if(receiverId === me){
+            if (id && clientSender) {        
+                dispatch(getClientRecever(id));
+                dispatch(getMessageSenderWithReceiver(clientSender._id, id));
+            }
+        }
+        
+    });
+
+
     const [decryptedMessages, setDecryptedMessages] = useState<{
         [key: number]: string;
     }>({});
+
 
     useEffect(() => {
         const processDecryption = async () => {
@@ -105,6 +131,12 @@ const Message = () => {
   
     return (
         <div>
+            {/* <div role="alert" className="alert">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-info h-6 w-6 shrink-0">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span>12 unread messages. Tap to see.</span>
+            </div> */}
             {/* utilisateur receive */}
             <div className="border-b border-[#ffffff17] pb-2 flex flex-row items-center gap-5 ">
                 <div className="avatar">
